@@ -454,7 +454,10 @@
 
   /** Drive page padding / header tint from the same sRGB as the expected-color swatch. */
   function applyExpectedColorTheme(r8, g8, b8) {
-    document.documentElement.style.setProperty("--expected-rgb", `${r8}, ${g8}, ${b8}`);
+    document.documentElement.style.setProperty(
+      "--expected-rgb",
+      `${r8} ${g8} ${b8}`
+    );
   }
 
   function updateColorDisplay() {

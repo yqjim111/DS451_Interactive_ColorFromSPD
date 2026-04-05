@@ -5,13 +5,14 @@
 }
 
 :root {
-  /* Set by app.js from the “Expected color” sRGB; drives page padding / ambient tint */
-  --expected-rgb: 244, 244, 245;
-  --page-neutral: rgb(244, 244, 245);
+  /* Space-separated: rgb(var(--expected-rgb)) = solid sRGB (same as row 4 swatch). Set in app.js */
+  --expected-rgb: 244 244 245;
 }
 
 html {
   min-height: 100%;
+  /* Match body so overscroll doesn’t flash wrong color */
+  background-color: rgb(var(--expected-rgb));
 }
 
 body {
@@ -20,16 +21,8 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
   font-size: 13px;
   color: #1a1a1a;
-  /* Side gutters pick up more chroma; center stays near-neutral so content stays readable */
-  background: linear-gradient(
-    90deg,
-    rgb(var(--expected-rgb) / 0.26) 0%,
-    rgb(var(--expected-rgb) / 0.11) 18%,
-    var(--page-neutral) 50%,
-    rgb(var(--expected-rgb) / 0.11) 82%,
-    rgb(var(--expected-rgb) / 0.26) 100%
-  );
-  background-attachment: fixed;
+  /* Solid expected color: visible in the left/right padding beside .app-main (white cards) */
+  background-color: rgb(var(--expected-rgb));
 }
 
 h1 {
@@ -39,15 +32,9 @@ h1 {
 }
 
 .app-header {
-  padding: 12px 20vw 0;
-  padding-bottom: 10px;
-  background: linear-gradient(
-    180deg,
-    rgb(var(--expected-rgb) / 0.14) 0%,
-    rgb(var(--expected-rgb) / 0.04) 55%,
-    transparent 100%
-  );
-  border-bottom: 1px solid rgb(var(--expected-rgb) / 0.12);
+  padding: 12px 20vw 14px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .app-main {
@@ -56,6 +43,7 @@ h1 {
   gap: 12px;
   padding: 0 20vw 16px;
   min-height: calc(100% - 48px);
+  background: transparent;
 }
 
 .spectrum-row {
@@ -261,10 +249,9 @@ h1 {
   background: #fff;
   border-radius: 8px;
   padding: 10px;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.06),
-    0 4px 24px rgb(var(--expected-rgb) / 0.14);
-  border: 1px solid rgb(var(--expected-rgb) / 0.18);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* Same solid sRGB as the swatch — no alpha */
+  border: 2px solid rgb(var(--expected-rgb));
 }
 
 .color-row__left {
