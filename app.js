@@ -452,10 +452,16 @@
     };
   }
 
+  /** Drive page padding / header tint from the same sRGB as the expected-color swatch. */
+  function applyExpectedColorTheme(r8, g8, b8) {
+    document.documentElement.style.setProperty("--expected-rgb", `${r8}, ${g8}, ${b8}`);
+  }
+
   function updateColorDisplay() {
     let { X, Y, Z } = integrateXYZ();
     if (!Number.isFinite(Y) || Y <= 1e-15) {
       colorSwatch.style.background = "#888";
+      applyExpectedColorTheme(136, 136, 136);
       if (colorSummary) {
         colorSummary.textContent =
           "XYZ integrals are zero or invalid — check SPD and reflectance.";
@@ -474,6 +480,7 @@
     const G8 = Math.round(rgb.g * 255);
     const B8 = Math.round(rgb.b * 255);
     colorSwatch.style.background = `rgb(${R8},${G8},${B8})`;
+    applyExpectedColorTheme(R8, G8, B8);
     if (colorSummary) {
       colorSummary.textContent = `Brightness k = ${bright.toFixed(
         2
