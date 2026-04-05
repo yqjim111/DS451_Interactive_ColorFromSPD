@@ -1,0 +1,8 @@
+{
+  "illuminants": ["Daylight.csv", "Fluroscent.csv", "LED.csv"],
+  "reflectance": [
+    "Green Rolling Cabinet.csv",
+    "Macbeth Blue Flower.csv",
+    "Wood Pine Treated.csv"
+  ]
+}

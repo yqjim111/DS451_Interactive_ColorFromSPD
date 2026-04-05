@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interactive SPD × Reflectance → sRGB (CIE 1931 2°)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>Interactive color from SPD × reflectance (CIE XYZ 1931, 2°)</h1>
+      <p class="hint">
+        The active band is <strong>380–700&nbsp;nm</strong> (1&nbsp;nm steps). Values outside each CSV’s support are
+        treated as 0. Tristimulus values use Σ(S(λ) R(λ) x̄(λ)) Δλ with Δλ = 1&nbsp;nm, then Y is normalized to 1; use the
+        brightness control to scale XYZ uniformly before sRGB (display only).
+      </p>
+    </header>
+    <div id="errorBanner" class="error-banner" role="alert"></div>
+    <main class="app-main">
+      <section class="spectrum-row" data-row="spd">
+        <div class="spectrum-row__curves">
+          <div class="spectrum-row__label">Spectral power distribution S(λ)</div>
+          <div class="toolbar" id="toolbarSpd"></div>
+          <div class="canvas-wrap">
+            <canvas id="canvasSpd" width="900" height="160"></canvas>
+          </div>
+          <div class="spectral-strip-wrap">
+            <div class="spectral-strip__label">
+              Spectral colors (monochromatic: CMF at λ, Y normalized), 380–700&nbsp;nm
+            </div>
+            <canvas id="canvasSpectral" class="spectral-strip__canvas" width="900" height="36"></canvas>
+          </div>
+          <div class="spd-intensity">
+            <label class="spd-intensity__label" for="intensitySlider"
+              >Display brightness — uniform scale on XYZ before sRGB (feels like dimming the illuminant)</label>
+            <div class="spd-intensity__row">
+              <input type="range" id="intensitySlider" min="0.02" max="1" step="0.01" value="0.28" />
+              <span class="spd-intensity__value" id="intensityValue">0.28</span>
+            </div>
+          </div>
+          <div class="control-influence">
+            <label class="control-influence__label" for="influenceDegree"
+              >Drag influence degree (custom SPD &amp; reflectance): 1 = only selected point; larger = smooth falloff to
+              neighbors. Max = N/2.</label>
+            <select id="influenceDegree" class="control-influence__select" aria-label="Drag influence degree"></select>
+          </div>
+          <p class="hint" id="hintSpd">Preset loads a CSV; Custom uses 20 control points (drag vertically).</p>
+        </div>
+        <div class="spectrum-row__table">
+          <div class="spectrum-row__label">Table</div>
+          <div class="table-scroll" id="tableScrollSpd">
+            <table>
+              <thead>
+                <tr>
+                  <th>λ (nm)</th>
+                  <th>S(λ)</th>
+                </tr>
+              </thead>
+              <tbody id="tbodySpd"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="spectrum-row" data-row="refl">
+        <div class="spectrum-row__curves">
+          <div class="spectrum-row__label">Reflectance R(λ)</div>
+          <div class="toolbar" id="toolbarRefl"></div>
+          <div class="canvas-wrap">
+            <canvas id="canvasRefl" width="900" height="160"></canvas>
+          </div>
+          <p class="hint" id="hintRefl"></p>
+        </div>
+        <div class="spectrum-row__table">
+          <div class="spectrum-row__label">Table</div>
+          <div class="table-scroll" id="tableScrollRefl">
+            <table>
+              <thead>
+                <tr>
+                  <th>λ (nm)</th>
+                  <th>R(λ)</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyRefl"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="spectrum-row" data-row="cmf">
+        <div class="spectrum-row__curves">
+          <div class="spectrum-row__label">Color matching functions (read-only)</div>
+          <div class="canvas-wrap">
+            <canvas id="canvasCmf" width="900" height="160"></canvas>
+          </div>
+        </div>
+        <div class="spectrum-row__table">
+          <div class="spectrum-row__label">Table</div>
+          <div class="table-scroll" id="tableScrollCmf">
+            <table>
+              <thead>
+                <tr>
+                  <th>λ (nm)</th>
+                  <th>x̄</th>
+                  <th>ȳ</th>
+                  <th>z̄</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyCmf"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="color-row">
+        <div class="color-row__left">
+          <div class="color-row__title">Expected color</div>
+          <div class="color-row__swatch">
+            <div class="color-row__swatch-inner" id="colorSwatch"></div>
+          </div>
+          <p class="hint color-row__summary" id="colorSummary"></p>
+        </div>
+        <div class="color-row__calc">
+          <div class="spectrum-row__label">Contribution (S × R × CMF), 2 d.p.</div>
+          <div class="table-scroll" id="tableScrollCalc">
+            <table>
+              <thead>
+                <tr>
+                  <th>λ (nm)</th>
+                  <th>S × R × x̄</th>
+                  <th>S × R × ȳ</th>
+                  <th>S × R × z̄</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyCalc"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
